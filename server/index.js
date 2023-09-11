@@ -34,6 +34,8 @@ app.use(
     })
   );
 
+app.use(express.json())
+
 app.get("/api/todos", async (req, res) => {
     const todos = await sql`SELECT * FROM todos`
     console.log(todos)
@@ -44,9 +46,15 @@ app.get("/api/todos", async (req, res) => {
     }
 })
 
-app.get("api/todos2", async(req, res) => {
-    const todos2 = await sql `INSERT INTO todos (task, is_completed) VALUES ('Eat jellof rice', false)`
-    res.send(todos2)
+app.post("/api/todos2", async (req, res) => {
+    const { task, is_completed } = req.body
+    const todos2 = await sql `INSERT INTO todos (task, is_completed) VALUES (${task}, ${is_completed}) RETURNING *`
+    console.log(todos2)
+    if (todos2){
+        res.status(201).send("Successfully inserted, You can return to earth :)")
+    } else {
+        res.status(404).send("Error 404")
+    }
 })
 
 app.listen(3000, () => {

@@ -34,8 +34,19 @@ app.use(
     })
   );
 
-app.get("/api/todos", (req, res) => {
-    res.json(data)
+app.get("/api/todos", async (req, res) => {
+    const todos = await sql`SELECT * FROM todos`
+    console.log(todos)
+    if (todos){
+        res.status(200).send(todos)
+    } else {
+        res.status(404).send("Errorrrrrrr. Leave the planet")       
+    }
+})
+
+app.get("api/todos2", async(req, res) => {
+    const todos2 = await sql `INSERT INTO todos (task, is_completed) VALUES ('Eat jellof rice', false)`
+    res.send(todos2)
 })
 
 app.listen(3000, () => {
